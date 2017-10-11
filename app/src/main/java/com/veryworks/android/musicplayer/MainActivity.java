@@ -1,6 +1,7 @@
 package com.veryworks.android.musicplayer;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -18,6 +19,9 @@ implements MusicFragment.OnListFragmentInteractionListener{
 
     @Override
     public void init(){
+        // 볼륨 조절 버튼으로 미디어 음량만 조절하기 위한 설정
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
         setContentView(R.layout.activity_main);
         load();
         initView();

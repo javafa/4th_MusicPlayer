@@ -44,6 +44,8 @@ public class Music {
                 item.artist = getValue(cursor, proj[2]);
                 item.title = getValue(cursor, proj[3]);
 
+                item.musicUri = makeMusicUri(item.id);
+                item.albumUri = makeAlbumUri(item.albumId);
                 data.add(item);
             }
             cursor.close();
@@ -53,6 +55,16 @@ public class Music {
     private String getValue(Cursor cursor, String name){
         int index = cursor.getColumnIndex(name);
         return cursor.getString(index);
+    }
+
+    private Uri makeMusicUri(String musicId){
+        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        return Uri.withAppendedPath(contentUri, musicId);
+    }
+
+    private Uri makeAlbumUri(String albumId){
+        String contentUri = "content://media/external/audio/albumart/";
+        return Uri.parse(contentUri + albumId);
     }
 
     // 실제 뮤직 데이터
@@ -65,5 +77,4 @@ public class Music {
         public Uri musicUri; // 음악의 주소
         public Uri albumUri; // 앨범이미지의 주소
     }
-
 }
