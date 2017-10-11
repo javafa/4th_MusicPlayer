@@ -12,4 +12,7 @@ public class Const {
     public static final int STAT_PLAY = 1;
     public static final int STAT_PAUSE = 2;
     public static final int STAT_STOP = 3;
+
+    // seekBar handler
+    public static final int WHAT_SET = 1;
 }

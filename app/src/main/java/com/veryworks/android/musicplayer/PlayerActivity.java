@@ -5,6 +5,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,9 +38,9 @@ implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         load();
-        initControl();
         initView();
         initViewPager();
+        initControl();
         start();
     }
 
@@ -53,13 +55,51 @@ implements View.OnClickListener{
         setPlayer();
     }
 
+    Thread seekBarThread = null;
     private void setPlayer(){
         Music.Item item = music.data.get(current);
         Uri musicUri = item.musicUri;
-        if(player != null)
+        if(player != null) {
             player.release();
+            if(seekBarThread != null)
+                seekBarThread.interrupt();
+        }
         player = MediaPlayer.create(this, musicUri);
         player.setLooping(false);
+
+        // 화면세팅
+        String duration = miliToSec(player.getDuration()); // 16754265 => 03:15
+        textDuration.setText(duration);
+        textCurrentTime.setText("00:00");
+
+        seekBar.setMax(player.getDuration());
+
+        seekBarThread = new Thread(){
+            public void run(){
+                while(true) {
+                    if (player != null) {
+                        Message msg = new Message();
+                        msg.what = Const.WHAT_SET;
+                        //msg.arg1 = player.getCurrentPosition();
+                        handler.sendMessage(msg);
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        seekBarThread.start();
+    }
+
+    private String miliToSec(int mili){
+        int sec = mili / 1000;
+        int min = sec / 60;
+        sec = sec % 60;
+
+        return String.format("%02d", min) + ":" + String.format("%02d",sec);
     }
 
 
@@ -99,8 +139,6 @@ implements View.OnClickListener{
                 setPlayer();
                 if(playButtonStat == Const.STAT_PLAY){
                     start();
-                }else{
-
                 }
             }
 
@@ -155,4 +193,19 @@ implements View.OnClickListener{
                 break;
         }
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case Const.WHAT_SET:
+                    if(player != null) {
+                        int cp = player.getCurrentPosition();
+                        seekBar.setProgress(cp);
+                        textCurrentTime.setText(miliToSec(cp));
+                    }
+                    break;
+            }
+        }
+    };
 }
