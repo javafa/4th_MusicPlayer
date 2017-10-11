@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.veryworks.android.musicplayer.dummy.DummyContent.DummyItem;
+import com.veryworks.android.musicplayer.model.Music;
 
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class MusicFragment extends Fragment {
     // 액티비티에서 implement 하지 않으면 앱이 강제로 종료된다.
     public interface OnListFragmentInteractionListener {
         // 목록 데이터를 가져오는 함수
-        List<DummyItem> getList();
+        List<Music.Item> getList();
         // 메인액티비티에서 새로운 페이지로 이동하는 함수
         void openPlayer(int position);
     }

@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.veryworks.android.musicplayer.MusicFragment.OnListFragmentInteractionListener;
-import com.veryworks.android.musicplayer.dummy.DummyContent.DummyItem;
+import com.veryworks.android.musicplayer.model.Music;
 
 import java.util.List;
 
 public class MyMusicRecyclerViewAdapter extends RecyclerView.Adapter<MyMusicRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Music.Item> mValues;
     private final OnListFragmentInteractionListener mListener;
 
     public MyMusicRecyclerViewAdapter(OnListFragmentInteractionListener listener) {
@@ -32,7 +32,7 @@ public class MyMusicRecyclerViewAdapter extends RecyclerView.Adapter<MyMusicRecy
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mContentView.setText(mValues.get(position).title);
         holder.position = position;
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +57,7 @@ public class MyMusicRecyclerViewAdapter extends RecyclerView.Adapter<MyMusicRecy
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Music.Item mItem;
 
         public ViewHolder(View view) {
             super(view);

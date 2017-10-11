@@ -1,32 +1,36 @@
 package com.veryworks.android.musicplayer;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 
-import com.veryworks.android.musicplayer.dummy.DummyContent;
+import com.veryworks.android.musicplayer.model.Music;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
 implements MusicFragment.OnListFragmentInteractionListener{
-
+    Music music = null;
     private ViewPager viewPager;
     private TabLayout tablayout;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void init(){
         setContentView(R.layout.activity_main);
+        load();
         initView();
         initViewPager();
         initTabs();
         initListener();
     }
+
+    private void load(){
+        music = Music.getInstance();
+        music.load(this);
+    }
+
     private void initView() {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tablayout = (TabLayout) findViewById(R.id.tablayout);
@@ -62,8 +66,8 @@ implements MusicFragment.OnListFragmentInteractionListener{
     }
 
     @Override
-    public List<DummyContent.DummyItem> getList() {
-        return DummyContent.ITEMS;
+    public List<Music.Item> getList() {
+        return music.data;
     }
 
     @Override
