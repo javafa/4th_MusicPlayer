@@ -55,15 +55,17 @@ implements View.OnClickListener{
         setPlayer();
     }
 
-    Thread seekBarThread = null;
+    SeekBarThread seekBarThread = null;
     private void setPlayer(){
         Music.Item item = music.data.get(current);
         Uri musicUri = item.musicUri;
+        if(seekBarThread != null)
+            seekBarThread.setStop();
         if(player != null) {
             player.release();
-            if(seekBarThread != null)
-                seekBarThread.interrupt();
+            player = null;
         }
+
         player = MediaPlayer.create(this, musicUri);
         player.setLooping(false);
 
@@ -74,23 +76,7 @@ implements View.OnClickListener{
 
         seekBar.setMax(player.getDuration());
 
-        seekBarThread = new Thread(){
-            public void run(){
-                while(true) {
-                    if (player != null) {
-                        Message msg = new Message();
-                        msg.what = Const.WHAT_SET;
-                        //msg.arg1 = player.getCurrentPosition();
-                        handler.sendMessage(msg);
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
+        seekBarThread = new SeekBarThread(handler);
         seekBarThread.start();
     }
 
@@ -165,6 +151,9 @@ implements View.OnClickListener{
 
     @Override
     protected void onDestroy() {
+        if(seekBarThread != null)
+            seekBarThread.setStop();
+
         if (player != null)
             player.release();
 
@@ -208,4 +197,25 @@ implements View.OnClickListener{
             }
         }
     };
+}
+
+class SeekBarThread extends Thread {
+    private boolean runFlag = true;
+    private Handler handler;
+    public SeekBarThread(Handler handler){
+        this.handler = handler;
+    }
+    public void setStop(){
+        runFlag = false;
+    }
+    public void run(){
+        while(runFlag) {
+            handler.sendEmptyMessage(Const.WHAT_SET);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
