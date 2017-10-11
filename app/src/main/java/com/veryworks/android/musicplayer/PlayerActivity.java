@@ -17,6 +17,11 @@ import android.widget.TextView;
 
 import com.veryworks.android.musicplayer.model.Music;
 
+/**
+ * Thread 사용시 주의점
+ * interrupt로 Thread가 실시간 종료되지 않는다
+ *
+ */
 public class PlayerActivity extends AppCompatActivity
 implements View.OnClickListener{
 
